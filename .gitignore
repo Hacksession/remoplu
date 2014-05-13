@@ -141,6 +141,7 @@ AppPackages/
 
 # Others
 sql/
+.idea
 *.Cache
 ClientBin/
 [Ss]tyle[Cc]op.*
