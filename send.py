@@ -1,14 +1,14 @@
 #!/usr/bin/env python
 import sys, sqlite3, os
 
-
+'''
 name = sys.argv[1] # can be string or dip code
 state = sys.argv[2]
 
 '''
-name = '1111000110'
+name = 'TV'
 state = '00'
-'''
+#'''
 
 con = sqlite3.connect("Steckdosen.db")
 cur = con.cursor()
@@ -30,6 +30,7 @@ def get_info_about(value):
     if len(result) != 0:
         if result[0][2] == 'group':
             print 'category is group'
+            print result[0][0]
             group(result[0][0])
         elif result[0][2] == 'plug':
             print 'category is plug'
@@ -43,13 +44,15 @@ def group(value):
     sql = "SELECT * FROM device WHERE groupname LIKE (?) AND state != (?)"  # Achtung wert ist case sensitiv! Sollte noch geaendert weden
     cur.execute(sql, values)
     for row in cur:
-        sql = "UPDATE device SET state = (?) WHERE dip = (?)"
-        values = (state, str(row[1]))
+        print row
+        sql = "UPDATE device SET state = (?) WHERE name = (?)"
+        values = (state, str(row[0]))
         cur2 = con.cursor()
         cur2.execute(sql, values)
         con.commit()
-        command = "send %s %s" % (row[1], state)
-        os.system("sudo /home/pi/raspberry-remote/%s" %command)  # call c++ script
+
+        #command = "send %s %s" % (row[1], state)
+        #os.system("sudo /home/pi/raspberry-remote/%s" %command)  # call c++ script
 
 
 def plug(dip):
@@ -58,8 +61,8 @@ def plug(dip):
     cur2 = con.cursor()
     cur2.execute(sql, values)
     con.commit()
-    command = "send %s %s" % (dip, state)
-    os.system("sudo /home/pi/raspberry-remote/%s" %command)  # call c++ script
+    #command = "send %s %s" % (dip, state)
+    #os.system("sudo /home/pi/raspberry-remote/%s" %command)  # call c++ script
 
 get_info_about(name)
 
