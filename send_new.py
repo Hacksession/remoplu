@@ -1,17 +1,26 @@
 #!/usr/bin/env python
-import sys, sqlite3, os
+import sys
+import sqlite3
+import os
 
 
-name = sys.argv[1] # can be string or dip code
-state = sys.argv[2]
+
+
 
 '''
-name = 'Dose2'
-state = '01'
+name = 'New'
+state = '00'
 '''
 
-con = sqlite3.connect("Steckdosen.db")
-cur = con.cursor()
+def state_invert(name, state):
+    sql = "SELECT state FROM device WHERE name = '%s'" % name
+    cur.execute(sql)
+    state = cur.fetchall()
+    if state == '00':
+        state = 01
+
+    return (state)
+
 
 
 def get_info_about(value):
@@ -64,11 +73,28 @@ def plug(name):
     cur2 = con.cursor()
     cur2.execute(sql, values)
     con.commit()
-    print name
     command = "send %s %s" % (name, state)
     os.system("sudo /home/pi/raspberry-remote/%s" %command)  # call c++ script
 
-get_info_about(name)
+
+con = sqlite3.connect("Steckdosen.db")
+cur = con.cursor()
+
+if len(sys.argv) == 1:
+    name = 'all'
+    state = '00'
+    print state
+    state_invert(name, state)
+    print state
+elif len(sys.argv) == 2:
+    name = sys.argv[1]  # can be a string or a dip code
+elif len(sys.argv) == 3:
+    name = sys.argv[1]
+    state = sys.argv[2]
+else:
+    print 'syntax error'
+
+
 
 
 
